@@ -42,11 +42,8 @@ class ImageClassification(Block):
         with CameraInference(image_classification.model()) as inference:
             for result in inference.run():
                 self.logger.debug('running inference...')
-                classes = image_classification.get_classes(result)
-                self.logger.debug('returned {} classes'.format(len(classes)))
-                top_score = max([score for _, score in classes])
-                top_prediction = [(obj, score) for obj, score in classes if score == top_score][0]
-                self.notify_signals([Signal({'prediction': top_prediction[0], 'confidence': top_prediction[1]})])
+                classes = image_classification.get_classes(result,  max_num_objects=10)
+                self.notify_signals([Signal({'predictions': classes})])
                 if self._kill:
                     break
             self.camera.close()

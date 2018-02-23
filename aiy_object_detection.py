@@ -54,11 +54,14 @@ class ObjectDetection(Block):
                 result = inference.run(image_center)
                 self.logger.debug('getting results')
                 objects = object_detection.get_objects(result, 0.3, offset)
-                self.logger.debug([str(obj) for obj in objects])
-                #top_score = max([score for _, score in classes])
-                #top_prediction = [(obj, score) for obj, score in classes if score == top_score][0]
-                #self.notify_signals([Signal({'prediction': top_prediction[0], 'confidence': top_prediction[1]})])
-                if self._kill:
+                out = []
+                for obj in objects:
+                    self.logger.debug(obj)
+                    out.append(Signal({'kind': obj._LABELS[obj.kind], 'score': obj.score, 'bounding_box': obj.bounding_box}))
+                self.logger.debug('found {} objects'.format(len(out)))
+                if not self._kill:
+                    self.notify_signals(out)
+                else:
                     break
             self.camera.close()
             self.logger.debug('camera released')

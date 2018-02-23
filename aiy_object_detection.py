@@ -26,7 +26,8 @@ class ObjectDetection(Block):
         super().configure(context)
         self.camera = PiCamera()
         self.camera.sensor_mode = 4
-        self.camera.resolution = (1640, 1232)
+        # self.camerea_resolution = (1640, 1232)
+        self.camera.resolution = (256, 256)
         self.camera.framerate = 30
         self.logger.debug('camera configured')
 
@@ -44,16 +45,17 @@ class ObjectDetection(Block):
         self.logger.debug('loading inference model')
         with ImageInference(object_detection.model()) as inference:
             while not self._kill:
-                foo = io.BytesIO()
+                frame_buffer = io.BytesIO()
                 self.logger.debug('capturing frame')
-                self.camera.capture(foo, format='jpeg')
-                image = Image.open(foo)
-                self.logger.debug('cropping image')
-                image_center, offset = self._crop_center(image)
+                self.camera.capture(frame_buffer, format='jpeg')
+                image = Image.open(frame_buffer)
+                # image_center, offset = self._crop_center(image)
                 self.logger.debug('running inference')
-                result = inference.run(image_center)
+                # result = inference.run(image_center)
+                result = inference.run(image)
                 self.logger.debug('getting results')
-                objects = object_detection.get_objects(result, 0.3, offset)
+                # objects = object_detection.get_objects(result, 0.3, offset)
+                objects = object_detection.get_objects(result, 0.3)
                 out = []
                 for obj in objects:
                     self.logger.debug(obj)
@@ -67,6 +69,7 @@ class ObjectDetection(Block):
             self.logger.debug('camera released')
 
     def _crop_center(self, image):
+        self.logger.debug('cropping image')
         width, height = image.size
         size = min(width, height)
         x, y = (width - size) /2, (height - size) /2

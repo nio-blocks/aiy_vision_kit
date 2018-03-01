@@ -3,13 +3,13 @@ from picamera import PiCamera
 from aiy.vision.inference import CameraInference
 from aiy.vision.models import face_detection
 
-from nio.block.base import Block
+from nio import GeneratorBlock
 from nio.properties import VersionProperty
 from nio.util.threading import spawn
 from nio.signal.base import Signal
 
 
-class JoyDetection(Block):
+class JoyDetection(GeneratorBlock):
 
     version = VersionProperty('0.0.1')
 

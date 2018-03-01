@@ -1,40 +1,48 @@
 {
-  "namespace/BlockName": {
-    "version": "1.0.0",
-    "description": "Description of the block.",
+  "nio/ImageClassification": {
+    "version": "0.0.1",
+    "description": "",
+    "categories": [],
     "properties": {
-      "<property1>": {
-        "description": "Required description of the property"
-      },
-      "<property2>": {
-        "default": "Optional metadata with any key.",
-        "description": "Required description of the property"
+      "num_top_predictions": {
+        "title": "Return Top k Predictions",
+        "type": "IntType",
+        "description": "",
+        "default": 10
       }
     },
-    "inputs": {
-      "<input1 | default>": {
-        "description": "Required description of the input"
-      },
-      "<input2>": {
-        "description": "Required description of the input"
-      }
-    },
+    "inputs": {},
     "outputs": {
-      "<output1 | default>": {
-        "description": "Required description of the output"
-      },
-      "<output2>": {
-        "description": "Required description of the output"
+      "default": {
+        "description": ""
       }
     },
-    "commands": {
-      "<command1>": {
-        "description": "Required description of the command",
-        "type": "Optional type and other metadata with any key."
-      },
-      "<command2>": {
-        "description": "Required description of the command"
+    "commands": {}
+  },
+  "nio/JoyDetection": {
+    "version": "0.0.1",
+    "description": "",
+    "categories": [],
+    "properties": {},
+    "inputs": {},
+    "outputs": {
+      "default": {
+        "description": ""
       }
-    }
+    },
+    "commands": {}
+  },
+  "nio/ObjectDetection": {
+    "version": "0.0.1",
+    "description": "",
+    "categories": [],
+    "properties": {},
+    "inputs": {},
+    "outputs": {
+      "default": {
+        "description": ""
+      }
+    },
+    "commands": {}
   }
 }

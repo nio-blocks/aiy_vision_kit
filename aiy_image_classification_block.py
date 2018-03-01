@@ -3,13 +3,13 @@ from picamera import PiCamera
 from aiy.vision.inference import CameraInference
 from aiy.vision.models import image_classification
 
-from nio.block.base import Block
+from nio import GeneratorBlock
 from nio.properties import VersionProperty, IntProperty
 from nio.util.threading import spawn
 from nio.signal.base import Signal
 
 
-class ImageClassification(Block):
+class ImageClassification(GeneratorBlock):
 
     version = VersionProperty('0.0.1')
     num_top_predictions = IntProperty(

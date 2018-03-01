@@ -6,13 +6,13 @@ from picamera import PiCamera
 from aiy.vision.inference import ImageInference
 from aiy.vision.models import object_detection
 
-from nio.block.base import Block
+from nio import GeneratorBlock
 from nio.properties import VersionProperty
 from nio.util.threading import spawn
 from nio.signal.base import Signal
 
 
-class ObjectDetection(Block):
+class ObjectDetection(GeneratorBlock):
 
     version = VersionProperty('0.0.1')
 

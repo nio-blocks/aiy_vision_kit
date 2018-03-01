@@ -24,7 +24,7 @@ class ImageClassification(Block):
         self.camera = PiCamera()
         self.camera.sensor_mode = 4
         self.camera.resolution = (1640, 1232)
-        self.camera.framerate = 30
+        self.camera.framerate = 15
         self.logger.debug('camera configured')
 
     def start(self):
@@ -43,8 +43,9 @@ class ImageClassification(Block):
             for result in inference.run():
                 self.logger.debug('running inference...')
                 classes = image_classification.get_classes(result,  max_num_objects=10)
-                self.notify_signals([Signal({'predictions': classes})])
-                if self._kill:
+                if not self._kill:
+                    self.notify_signals([Signal({'predictions': classes})])
+                else:
                     break
             self.camera.close()
             self.logger.debug('camera released')

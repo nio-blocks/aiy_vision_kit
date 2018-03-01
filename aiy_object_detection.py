@@ -26,9 +26,8 @@ class ObjectDetection(Block):
         super().configure(context)
         self.camera = PiCamera()
         self.camera.sensor_mode = 4
-        # self.camerea_resolution = (1640, 1232)
-        self.camera.resolution = (256, 256)
-        self.camera.framerate = 30
+        self.camera.resolution = (1640, 1232)
+        self.camera.framerate = 15
         self.logger.debug('camera configured')
 
     def start(self):
@@ -49,17 +48,19 @@ class ObjectDetection(Block):
                 self.logger.debug('capturing frame')
                 self.camera.capture(frame_buffer, format='jpeg')
                 image = Image.open(frame_buffer)
-                # image_center, offset = self._crop_center(image)
+                image_center, offset = self._crop_center(image)
                 self.logger.debug('running inference')
-                # result = inference.run(image_center)
-                result = inference.run(image)
+                result = inference.run(image_center)
                 self.logger.debug('getting results')
-                # objects = object_detection.get_objects(result, 0.3, offset)
-                objects = object_detection.get_objects(result, 0.3)
+                objects = object_detection.get_objects(result, 0.3, offset)
                 out = []
                 for obj in objects:
                     self.logger.debug(obj)
-                    out.append(Signal({'kind': obj._LABELS[obj.kind], 'score': obj.score, 'bounding_box': obj.bounding_box}))
+                    sig = {
+                        'kind': obj._LABELS[obj.kind],
+                        'score': obj.score,
+                        'bounding_box': obj.bounding_box}
+                    out.append(Signal(sig))
                 self.logger.debug('found {} objects'.format(len(out)))
                 if not self._kill:
                     self.notify_signals(out)

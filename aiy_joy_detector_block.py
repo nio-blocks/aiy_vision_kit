@@ -45,10 +45,16 @@ class JoyDetection(Block):
                 faces = face_detection.get_faces(result)
                 self.logger.debug('found {} faces'.format(len(faces)))
                 joy_score = 0.0
-                if faces:
-                    joy_score = sum([face.joy_score for face in faces]) / len(faces)
-                self.notify_signals([Signal({'joy_score': joy_score})])
-                if self._kill:
+                out = []
+                for face in faces:
+                    sig = {
+                        'bounding_box': face.bounding_box,
+                        'face_score': face.face_score,
+                        'joy_score': face.joy_score}
+                    out.append(Signal(sig))
+                if not self._kill:
+                    self.notify_signals(out)
+                else:
                     break
             self.camera.close()
             self.logger.debug('camera released')

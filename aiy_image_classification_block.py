@@ -4,7 +4,7 @@ from aiy.vision.inference import CameraInference
 from aiy.vision.models import image_classification
 
 from nio.block.base import Block
-from nio.properties import VersionProperty
+from nio.properties import VersionProperty, IntProperty
 from nio.util.threading import spawn
 from nio.signal.base import Signal
 
@@ -12,6 +12,9 @@ from nio.signal.base import Signal
 class ImageClassification(Block):
 
     version = VersionProperty('0.0.1')
+    num_top_predictions = IntProperty(
+        title='Return Top k Predictions',
+        default=10)
 
     def __init__(self):
         super().__init__()
@@ -42,9 +45,16 @@ class ImageClassification(Block):
         with CameraInference(image_classification.model()) as inference:
             for result in inference.run():
                 self.logger.debug('running inference...')
-                classes = image_classification.get_classes(result,  max_num_objects=10)
+                objects = image_classification.get_classes(
+                    result, max_num_objects=self.num_top_predictions())
+                out = []
+                for obj in objects:
+                    sig = {
+                        'label': obj[0].split('/')[0],
+                        'confidence': obj[1]}
+                    out.append(Signal(sig))
                 if not self._kill:
-                    self.notify_signals([Signal({'predictions': classes})])
+                    self.notify_signals(out)
                 else:
                     break
             self.camera.close()

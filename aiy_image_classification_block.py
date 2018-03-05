@@ -1,3 +1,5 @@
+import base64
+import io
 from picamera import PiCamera
 
 from aiy.vision.inference import CameraInference
@@ -47,11 +49,14 @@ class ImageClassification(GeneratorBlock):
                 self.logger.debug('running inference...')
                 objects = image_classification.get_classes(
                     result, max_num_objects=self.num_top_predictions())
+                frame_buffer = io.BytesIO()
+                self.camera.capture(frame_buffer, format='jpeg')
                 out = []
                 for obj in objects:
                     sig = {
                         'label': obj[0].split('/')[0],
-                        'confidence': obj[1]}
+                        'confidence': obj[1],
+                        'frame': base64.b64encode(frame_buffer.getvalue()).decode('utf-8')}
                     out.append(Signal(sig))
                 if not self._kill:
                     self.notify_signals(out)

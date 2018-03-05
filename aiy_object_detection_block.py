@@ -1,3 +1,4 @@
+import base64
 import io
 from PIL import Image
 
@@ -59,7 +60,8 @@ class ObjectDetection(GeneratorBlock):
                     sig = {
                         'kind': obj._LABELS[obj.kind],
                         'score': obj.score,
-                        'bounding_box': obj.bounding_box}
+                        'bounding_box': obj.bounding_box,
+                        'frame': base64.b64encode(frame_buffer.getvalue()).decode('utf-8')}
                     out.append(Signal(sig))
                 self.logger.debug('found {} objects'.format(len(out)))
                 if not self._kill:

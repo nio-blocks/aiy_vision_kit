@@ -1,4 +1,3 @@
-import base64
 from io import BytesIO
 
 from PIL import Image
@@ -58,9 +57,9 @@ class JoyDetection(GeneratorBlock):
                 out = []
                 for face in faces:
                     sig = {
-                        'bounding_box': face.bounding_box,
-                        'face_score': face.face_score,
                         'joy_score': face.joy_score,
+                        'bounding_box': face.bounding_box,
+                        'confidence': face.face_score,
                         'image': Image.open(self.frame_buffer).convert('RGB')}
                     out.append(Signal(sig))
                 if not self._kill:
@@ -68,5 +67,5 @@ class JoyDetection(GeneratorBlock):
                 else:
                     break
             self.camera.close()
-            self.logger.debug('camera released')
             self.frame_buffer.close()
+            self.logger.debug('camera released')

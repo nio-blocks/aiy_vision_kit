@@ -1,5 +1,6 @@
-import base64
-import io
+from io import BytesIO
+
+from PIL import Image
 from picamera import PiCamera
 
 from aiy.vision.inference import CameraInference
@@ -15,11 +16,11 @@ class ImageClassification(GeneratorBlock):
 
     version = VersionProperty('0.0.1')
     num_top_predictions = IntProperty(
-        title='Return Top k Predictions',
-        default=10)
+        title='Return Top k Predictions', default=10)
 
     def __init__(self):
         super().__init__()
+        self.frame_buffer = BytesIO()
         self.camera = None
         self._thread = None
         self._kill = False
@@ -45,11 +46,12 @@ class ImageClassification(GeneratorBlock):
     def gobabygo(self):
         self.logger.debug('loading inference model')
         with CameraInference(image_classification.model()) as inference:
+            self.logger.debug('running inference loop...')
             for result in inference.run():
-                self.logger.debug('running inference...')
+                self.frame_buffer.truncate(0)
+                self.frame_buffer.seek(0)
                 objects = image_classification.get_classes(
                     result, max_num_objects=self.num_top_predictions())
-                frame_buffer = io.BytesIO()
                 self.logger.debug('capturing representative frame')
                 self.camera.capture(frame_buffer, format='jpeg')
                 out = []
@@ -57,11 +59,12 @@ class ImageClassification(GeneratorBlock):
                     sig = {
                         'label': obj[0].split('/')[0],
                         'confidence': obj[1],
-                        'frame': base64.b64encode(frame_buffer.getvalue()).decode('utf-8')}
+                        'image': Image.open(self.frame_buffer).convert('RGB')}
                     out.append(Signal(sig))
                 if not self._kill:
                     self.notify_signals(out)
                 else:
                     break
             self.camera.close()
+            self.frame_buffer.close()
             self.logger.debug('camera released')

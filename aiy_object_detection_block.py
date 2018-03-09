@@ -1,14 +1,13 @@
-import base64
-import io
-from PIL import Image
+from io import BytesIO
 
+from PIL import Image
 from picamera import PiCamera
 
 from aiy.vision.inference import CameraInference
 from aiy.vision.models import object_detection
 
 from nio import GeneratorBlock
-from nio.properties import VersionProperty
+from nio.properties import VersionProperty, FloatProperty
 from nio.util.threading import spawn
 from nio.signal.base import Signal
 
@@ -16,9 +15,11 @@ from nio.signal.base import Signal
 class ObjectDetection(GeneratorBlock):
 
     version = VersionProperty('0.0.1')
+    min_confidence = FloatProperty(title='Minimum Confidence', default=0.3)
 
     def __init__(self):
         super().__init__()
+        self.frame_buffer = BytesIO()
         self.camera = None
         self._thread = None
         self._kill = False
@@ -44,32 +45,29 @@ class ObjectDetection(GeneratorBlock):
     def gobabygo(self):
         self.logger.debug('loading inference model')
         with CameraInference(object_detection.model()) as inference:
+            self.logger.debug('running inference loop...')
             for result in inference.run():
-                self.logger.debug('running inference...')
-                objects = object_detection.get_objects(result, 0.3)
-                self.logger.debug('found {} objects'.format(len(objects)))
-                frame_buffer = io.BytesIO()
+                self.frame_buffer.truncate(0)
+                self.frame_buffer.seek(0)
+                objects = object_detection.get_objects(
+                    result, self.min_confidence())
                 if objects:
                     self.logger.debug('capturing represtantive frame')
                     self.camera.capture(frame_buffer, format='jpeg')
+                    self.frame_buffer.seek(0)
+                    self.logger.debug('found {} objects'.format(len(objects)))
                 out = []
                 for obj in objects:
                     sig = {
                         'kind': obj._LABELS[obj.kind],
-                        'score': obj.score,
                         'bounding_box': obj.bounding_box,
-                        'frame': base64.b64encode(frame_buffer.getvalue()).decode('utf-8')}
+                        'confidence': obj.score,
+                        'image': Image.open(self.frame_buffer).convert('RGB')}
                     out.append(Signal(sig))
                 if not self._kill:
                     self.notify_signals(out)
                 else:
                     break
             self.camera.close()
+            self.frame_buffer.close()
             self.logger.debug('camera released')
-
-    def _crop_center(self, image):
-        self.logger.debug('cropping image')
-        width, height = image.size
-        size = min(width, height)
-        x, y = (width - size) /2, (height - size) /2
-        return image.crop((x, y, x + size, y + size)), (x, y)

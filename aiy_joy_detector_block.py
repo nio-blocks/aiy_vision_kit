@@ -1,6 +1,7 @@
 import base64
 from io import BytesIO
 
+from PIL import Image
 from picamera import PiCamera
 
 from aiy.vision.inference import CameraInference
@@ -18,6 +19,7 @@ class JoyDetection(GeneratorBlock):
 
     def __init__(self):
         super().__init__()
+        self.frame_buffer = BytesIO()
         self.camera = None
         self._thread = None
         self._kill = False
@@ -43,20 +45,23 @@ class JoyDetection(GeneratorBlock):
     def gobabygo(self):
         self.logger.debug('loading inference model')
         with CameraInference(face_detection.model()) as inference:
+            self.logger.debug('running inference loop...')
             for result in inference.run():
-                self.logger.debug('running inference...')
+                self.frame_buffer.truncate(0)
+                self.frame_buffer.seek(0)
                 faces = face_detection.get_faces(result)
-                frame_buffer = BytesIO()
-                self.logger.debug('capturing representative frame')
-                self.camera.capture(frame_buffer, format='jpeg')
-                self.logger.debug('found {} faces'.format(len(faces)))
+                if faces:
+                    self.logger.debug('capturing representative frame')
+                    self.camera.capture(self.frame_buffer, format='jpeg')
+                    self.frame_buffer.seek(0)
+                    self.logger.debug('found {} faces'.format(len(faces)))
                 out = []
                 for face in faces:
                     sig = {
                         'bounding_box': face.bounding_box,
                         'face_score': face.face_score,
                         'joy_score': face.joy_score,
-                        'frame': base64.b64encode(frame_buffer.getvalue()).decode('utf-8')}
+                        'image': Image.open(self.frame_buffer).convert('RGB')}
                     out.append(Signal(sig))
                 if not self._kill:
                     self.notify_signals(out)
@@ -64,3 +69,4 @@ class JoyDetection(GeneratorBlock):
                     break
             self.camera.close()
             self.logger.debug('camera released')
+            self.frame_buffer.close()

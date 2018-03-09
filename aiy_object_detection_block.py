@@ -4,7 +4,7 @@ from PIL import Image
 
 from picamera import PiCamera
 
-from aiy.vision.inference import ImageInference
+from aiy.vision.inference import CameraInference
 from aiy.vision.models import object_detection
 
 from nio import GeneratorBlock
@@ -43,27 +43,23 @@ class ObjectDetection(GeneratorBlock):
 
     def gobabygo(self):
         self.logger.debug('loading inference model')
-        with ImageInference(object_detection.model()) as inference:
-            while not self._kill:
+        with CameraInference(object_detection.model()) as inference:
+            for result in inference.run():
+                self.logger.debug('running inference...')
+                objects = object_detection.get_objects(result, 0.3)
+                self.logger.debug('found {} objects'.format(len(objects)))
                 frame_buffer = io.BytesIO()
-                self.logger.debug('capturing frame')
-                self.camera.capture(frame_buffer, format='jpeg')
-                image = Image.open(frame_buffer)
-                image_center, offset = self._crop_center(image)
-                self.logger.debug('running inference')
-                result = inference.run(image_center)
-                self.logger.debug('getting results')
-                objects = object_detection.get_objects(result, 0.3, offset)
+                if objects:
+                    self.logger.debug('capturing represtantive frame')
+                    self.camera.capture(frame_buffer, format='jpeg')
                 out = []
                 for obj in objects:
-                    self.logger.debug(obj)
                     sig = {
                         'kind': obj._LABELS[obj.kind],
                         'score': obj.score,
                         'bounding_box': obj.bounding_box,
                         'frame': base64.b64encode(frame_buffer.getvalue()).decode('utf-8')}
                     out.append(Signal(sig))
-                self.logger.debug('found {} objects'.format(len(out)))
                 if not self._kill:
                     self.notify_signals(out)
                 else:

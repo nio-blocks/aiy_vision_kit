@@ -53,7 +53,7 @@ class ImageClassification(GeneratorBlock):
                 objects = image_classification.get_classes(
                     result, max_num_objects=self.num_top_predictions())
                 self.logger.debug('capturing representative frame')
-                self.camera.capture(frame_buffer, format='jpeg')
+                self.camera.capture(self.frame_buffer, format='jpeg')
                 out = []
                 for obj in objects:
                     sig = {

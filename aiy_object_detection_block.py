@@ -53,7 +53,7 @@ class ObjectDetection(GeneratorBlock):
                     result, self.min_confidence())
                 if objects:
                     self.logger.debug('capturing represtantive frame')
-                    self.camera.capture(frame_buffer, format='jpeg')
+                    self.camera.capture(self.frame_buffer, format='jpeg')
                     self.frame_buffer.seek(0)
                     self.logger.debug('found {} objects'.format(len(objects)))
                 out = []

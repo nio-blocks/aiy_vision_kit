@@ -29,7 +29,7 @@ class JoyDetection(GeneratorBlock):
 
     def start(self):
         super().start()
-        self._thread = spawn(self.gobabygo)
+        self._thread = spawn(self._run)
 
     def stop(self):
         super().stop()
@@ -37,24 +37,28 @@ class JoyDetection(GeneratorBlock):
         self.logger.debug('killing secondary thread')
         self._thread.join()
 
-    def gobabygo(self):
-        self.logger.debug('loading inference model')
-        with CameraInference(face_detection.model()) as inference:
-            for result in inference.run():
-                self.logger.debug('running inference...')
-                faces = face_detection.get_faces(result)
-                self.logger.debug('found {} faces'.format(len(faces)))
-                joy_score = 0.0
-                out = []
-                for face in faces:
-                    sig = {
-                        'bounding_box': face.bounding_box,
-                        'face_score': face.face_score,
-                        'joy_score': face.joy_score}
-                    out.append(Signal(sig))
-                if not self._kill:
-                    self.notify_signals(out)
-                else:
-                    break
-            self.camera.close()
-            self.logger.debug('camera released')
+    def _run(self):
+        while not self._kill
+            try:
+                self.logger.debug('loading inference model')
+                with CameraInference(face_detection.model()) as inference:
+                    for result in inference.run():
+                        self.logger.debug('running inference...')
+                        faces = face_detection.get_faces(result)
+                        self.logger.debug('found {} faces'.format(len(faces)))
+                        out = []
+                        for face in faces:
+                            sig = {
+                                'bounding_box': face.bounding_box,
+                                'face_score': face.face_score,
+                                'joy_score': face.joy_score,
+                            }
+                            out.append(Signal(sig))
+                        if not self._kill:
+                            self.notify_signals(out)
+                        else:
+                            break
+            except:
+                self.logger.exception('something has gone wrong!')
+        self.camera.close()
+        self.logger.debug('camera released')

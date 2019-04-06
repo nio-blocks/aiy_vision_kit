@@ -38,7 +38,7 @@ class JoyDetection(GeneratorBlock):
         self._thread.join()
 
     def _run(self):
-        while not self._kill
+        while not self._kill:
             try:
                 self.logger.debug('loading inference model')
                 with CameraInference(face_detection.model()) as inference:

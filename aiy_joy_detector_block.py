@@ -1,6 +1,10 @@
+from aiy.vision.inference import CameraInference
 from aiy.vision.models import face_detection
 
-from aiy_inference_base import InferenceBase
+from nio import Signal
+from nio.util.runner import RunnerStatus
+
+from .aiy_inference_base import InferenceBase
 
 
 class JoyDetection(InferenceBase):
@@ -13,9 +17,9 @@ class JoyDetection(InferenceBase):
                     self.logger.debug('running inference ...')
                     for result in inference.run():
                         faces = face_detection.get_faces(result)
-                        if faces:
-                            self.logger.debug(
-                                'found {} faces'.format(len(faces)))
+                        # if faces:
+                        #     self.logger.debug(
+                        #         'found {} faces'.format(len(faces)))
                         out = []
                         for face in faces:
                             sig = {

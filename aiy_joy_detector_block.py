@@ -2,40 +2,44 @@ from aiy.vision.inference import CameraInference
 from aiy.vision.models import face_detection
 
 from nio import Signal
-from nio.util.runner import RunnerStatus
-
 from .aiy_inference_base import InferenceBase
 
 
 class JoyDetection(InferenceBase):
 
-    def _run(self):
-        while not self._kill:
+    def __init__(self):
+        super().__init__()
+        self._running = True
+
+    def stop(self):
+        self._running = False
+        self.logger.debug('stopping child thread ...')
+        super().stop()
+
+    def run(self):
+        while self._running:
             try:
                 self.logger.debug('loading inference model ...')
                 with CameraInference(face_detection.model()) as inference:
                     self.logger.debug('running inference ...')
                     for result in inference.run():
                         faces = face_detection.get_faces(result)
-                        # if faces:
-                        #     self.logger.debug(
-                        #         'found {} faces'.format(len(faces)))
-                        out = []
+                        if faces:
+                            self.logger.debug(
+                                'found {} faces'.format(len(faces)))
+                        outgoing_signals = []
                         for face in faces:
-                            sig = {
+                            signal_dict = {
                                 'bounding_box': face.bounding_box,
                                 'face_score': face.face_score,
                                 'joy_score': face.joy_score,
                             }
-                            out.append(Signal(sig))
-                        if not self._kill:
-                            self.notify_signals(out)
-                        else:
+                            outgoing_signal = Signal(signal_dict)
+                            outgoing_signals.append(outgoing_signal)
+                        if not self._running:
                             break
+                        self.notify_signals(out)
             except:
                 self.logger.exception('failed to get inference result!')
-                if not self.status.is_set(RunnerStatus.warning):
-                    self.set_status('warning')
-                self._release_camera()
-                self._configure_camera()
-        self._release_camera()
+                self.reset_camera()
+        self.release_camera()

@@ -1,61 +1,51 @@
 from picamera import PiCamera
-
 from aiy.vision.inference import CameraInference
 from aiy.vision.models import image_classification
 
-from nio import GeneratorBlock
-from nio.properties import VersionProperty, IntProperty
-from nio.util.threading import spawn
-from nio.signal.base import Signal
+from nio.properties import FloatProperty, IntProperty, VersionProperty
+from nio import Signal
+from .aiy_inference_base import InferenceBase
 
 
-class ImageClassification(GeneratorBlock):
+class ImageClassification(InferenceBase):
 
-    version = VersionProperty('0.0.1')
-    num_top_predictions = IntProperty(
-        title='Return Top k Predictions',
-        default=10)
+    threshold = FloatProperty(title='Minimum Score', default=0.0)
+    top_k_predictions = IntProperty(title='Return Top k Predictions', default=3)
+
+    version = VersionProperty('0.1.0')
 
     def __init__(self):
         super().__init__()
-        self.camera = None
-        self._thread = None
-        self._kill = False
-
-    def configure(self, context):
-        super().configure(context)
-        self.camera = PiCamera()
-        self.camera.sensor_mode = 4
-        self.camera.resolution = (1640, 1232)
-        self.camera.framerate = 15
-        self.logger.debug('camera configured')
-
-    def start(self):
-        super().start()
-        self._thread = spawn(self.gobabygo)
+        self._running = True
 
     def stop(self):
+        self._running = False
+        self.logger.debug('killing child thread ...')
         super().stop()
-        self._kill = True
-        self.logger.debug('killing secondary thread')
-        self._thread.join()
 
-    def gobabygo(self):
-        self.logger.debug('loading inference model')
-        with CameraInference(image_classification.model()) as inference:
-            for result in inference.run():
-                self.logger.debug('running inference...')
-                objects = image_classification.get_classes(
-                    result, max_num_objects=self.num_top_predictions())
-                out = []
-                for obj in objects:
-                    sig = {
-                        'label': obj[0].split('/')[0],
-                        'confidence': obj[1]}
-                    out.append(Signal(sig))
-                if not self._kill:
-                    self.notify_signals(out)
-                else:
-                    break
-            self.camera.close()
-            self.logger.debug('camera released')
+    def run(self):
+        while self._running:
+            try:
+                self.logger.debug('loading inference model ...')
+                with CameraInference(image_classification.model()) as inference:
+                    self.logger.debug('running inference ...')
+                    for result in inference.run():
+                        predictions = image_classification.get_classes(
+                            result,
+                            top_k=self.top_k_predictions(),
+                            threshold=self.threshold())
+                        outgoing_signals = []
+                        for prediction in predictions:
+                            signal_dict = {
+                                'label': prediction[0],
+                                'score': prediction[1],
+                            }
+                            outgoing_signal = Signal(signal_dict)
+                            outgoing_signals.append(outgoing_signal)
+                        if not self._running:
+                            break
+                        self.notify_signals(outgoing_signals)
+            except:
+                self.logger.exception('failed to get inference result!')
+                self.reset_camera()
+        self.release_camera()

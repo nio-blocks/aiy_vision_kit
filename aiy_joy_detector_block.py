@@ -2,10 +2,13 @@ from aiy.vision.inference import CameraInference
 from aiy.vision.models import face_detection
 
 from nio import Signal
+from nio.properties import VersionProperty
 from .aiy_inference_base import InferenceBase
 
 
 class JoyDetection(InferenceBase):
+
+    version = VersionProperty('0.1.0')
 
     def __init__(self):
         super().__init__()

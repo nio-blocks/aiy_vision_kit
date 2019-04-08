@@ -72,9 +72,8 @@ class JoyDetection(GeneratorBlock):
                     for result in inference.run():
                         faces = face_detection.get_faces(result)
                         if faces:
-                            #self.logger.debug(
-                                #'found {} faces'.format(len(faces)))
-                            pass
+                            self.logger.debug(
+                                'found {} faces'.format(len(faces)))
                         out = []
                         for face in faces:
                             sig = {

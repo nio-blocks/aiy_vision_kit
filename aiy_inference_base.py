@@ -22,7 +22,6 @@ class InferenceBase(GeneratorBlock):
         super().__init__()
         self.camera = None
         self._leds = Leds()
-        self._kill = False
         self._thread = None
 
     def configure(self, context):
@@ -31,15 +30,13 @@ class InferenceBase(GeneratorBlock):
 
     def start(self):
         super().start()
-        self._thread = spawn(self._run)
+        self._thread = spawn(self.run)
 
     def stop(self):
-        super().stop()
-        self._kill = True
-        self.logger.debug('killing secondary thread ...')
         self._thread.join()
+        super().stop()
 
-    def _configure_camera(self):
+    def configure_camera(self):
         try:
             self.camera = PiCamera()
             self.camera.sensor_mode = 4
@@ -54,7 +51,7 @@ class InferenceBase(GeneratorBlock):
         except:
             self.logger.exception('failed to configure camera!')
 
-    def _release_camera(self):
+    def release_camera(self):
         try:
             self.camera.close()
             self._leds.update(Leds.privacy_off())
@@ -62,6 +59,12 @@ class InferenceBase(GeneratorBlock):
         except:
             self.logger.exception('failed to close camera!')
 
-    def _run(self):
+    def reset_camera(self):
+        if not self.status.is_set(RunnerStatus.warning):
+            self.set_status('warning')
+        self.release_camera()
+        self.configure_camera()
+
+    def run(self):
         # override and do the things
         raise NotImplementedError

@@ -1,14 +1,12 @@
 from picamera import PiCamera
 
 from aiy.leds import Leds
-from aiy.vision.inference import CameraInference
 
 from nio import GeneratorBlock
 from nio.properties import IntProperty, VersionProperty
 from nio.util.discovery import not_discoverable
 from nio.util.runner import RunnerStatus
 from nio.util.threading import spawn
-from nio.signal.base import Signal
 
 
 @not_discoverable

@@ -26,7 +26,7 @@ class InferenceBase(GeneratorBlock):
 
     def configure(self, context):
         super().configure(context)
-        self._configure_camera()
+        self.configure_camera()
 
     def start(self):
         super().start()

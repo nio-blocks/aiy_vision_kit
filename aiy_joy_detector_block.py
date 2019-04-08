@@ -38,7 +38,7 @@ class JoyDetection(InferenceBase):
                             outgoing_signals.append(outgoing_signal)
                         if not self._running:
                             break
-                        self.notify_signals(out)
+                        self.notify_signals(outgoing_signals)
             except:
                 self.logger.exception('failed to get inference result!')
                 self.reset_camera()

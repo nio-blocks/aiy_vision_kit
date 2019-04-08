@@ -12,9 +12,13 @@ from nio.util.threading import spawn
 @not_discoverable
 class InferenceBase(GeneratorBlock):
 
+    camera_framerate = IntProperty(
+        title='Maximum Camera Framerate',
+        default=10,
+        advanced=True)
     privacy_led_brightness = IntProperty(
         title='Privacy LED Brightness (0-255)',
-        default=255,
+        default=1,
         advanced=True)
     version = VersionProperty('0.0.1')
 
@@ -41,7 +45,7 @@ class InferenceBase(GeneratorBlock):
             self.camera = PiCamera()
             self.camera.sensor_mode = 4
             self.camera.resolution = (1640, 1232)
-            self.camera.framerate = 15
+            self.camera.framerate = self.camera_framerate()
             brightness = self.privacy_led_brightness()
             if brightness > 0:
                 self._leds.update(Leds.privacy_on(brightness=brightness))

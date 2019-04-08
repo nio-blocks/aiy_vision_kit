@@ -3,11 +3,14 @@ from PIL import Image
 from aiy.vision.inference import ImageInference
 from aiy.vision.models import inaturalist_classification
 
-from nio.signal.base import Signal
+from nio import Signal
+from nio.properties import VersionProperty
 from .aiy_inference_base import InferenceBase
 
 
 class iNaturalist(InferenceBase):
+
+    version = VersionProperty('0.1.0')
 
     def __init__(self):
         super().__init__()

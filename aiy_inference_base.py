@@ -3,7 +3,7 @@ from picamera import PiCamera
 from aiy.leds import Leds
 
 from nio import GeneratorBlock
-from nio.properties import IntProperty, VersionProperty
+from nio.properties import BoolProperty, IntProperty, VersionProperty
 from nio.util.discovery import not_discoverable
 from nio.util.runner import RunnerStatus
 from nio.util.threading import spawn
@@ -15,11 +15,24 @@ class InferenceBase(GeneratorBlock):
     camera_framerate = IntProperty(
         title='Maximum Camera Framerate',
         default=10,
-        advanced=True)
+        advanced=True,
+        order=0)
     privacy_led_brightness = IntProperty(
         title='Privacy LED Brightness (0-255)',
         default=1,
-        advanced=True)
+        advanced=True,
+        order=1)
+    flip_h = BoolProperty(
+        title='Flip Horizontally',
+        default=False,
+        advanced=True,
+        order=2)
+    flip_v = BoolProperty(
+        title='Flip Vertically',
+        default=False,
+        advanced=True,
+        order=3)
+
     version = VersionProperty('0.0.1')
 
     def __init__(self):
@@ -46,6 +59,8 @@ class InferenceBase(GeneratorBlock):
             self.camera.sensor_mode = 4
             self.camera.resolution = (1640, 1232)
             self.camera.framerate = self.camera_framerate()
+            self.camera.hflip = self.flip_h()
+            self.camera.vflip = self.flip_v()
             brightness = self.privacy_led_brightness()
             if brightness > 0:
                 self._leds.update(Leds.privacy_on(brightness=brightness))

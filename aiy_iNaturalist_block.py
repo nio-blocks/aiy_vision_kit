@@ -35,7 +35,8 @@ class iNaturalist(InferenceBase):
     def run(self):
         while self._running:
             try:
-                self.logger.debug('loading inference model ...')
+                self.logger.debug(
+                    'loading {} model ...'.format(self.model().name))
                 model = inaturalist_classification.model(self.model().value)
                 with CameraInference(model) as inference:
                     self.logger.debug('running inference ...')

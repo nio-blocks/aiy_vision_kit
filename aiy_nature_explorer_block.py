@@ -15,7 +15,7 @@ class Models(Enum):
     plants = inaturalist_classification.PLANTS
 
 
-class iNaturalist(InferenceBase):
+class NatureExplorer(InferenceBase):
 
     model = SelectProperty(Models, title='Classifier Model', default=Models.birds)
     threshold = FloatProperty(title='Minimum Score', default=0.0)
@@ -55,7 +55,7 @@ class iNaturalist(InferenceBase):
                             outgoing_signals.append(outgoing_signal)
                         if not self._running:
                             break
-                        self.notify_signals(outgoing_signals)
+                        self.notify_signals(outgoing_signals, 'predictions')
             except:
                 self.logger.exception('failed to get inference result!')
                 self.reset_camera()

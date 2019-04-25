@@ -19,6 +19,7 @@ class Camera:
     def close_camera(cls):
         if cls._camera is not None:
             cls._camera.close()
+        cls.configured = False
 
     @classmethod
     def configure_camera(cls):

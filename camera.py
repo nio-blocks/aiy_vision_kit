@@ -3,37 +3,39 @@ from picamera import PiCamera
 
 class Camera:
 
-    _camera = None
+    camera = None
     configured = False
     configuring = False
 
     @classmethod
-    def get_camera(cls):
-        return cls._camera
-
-    @classmethod
-    def set_camera(cls, camera_instance):
-        cls._camera = camera_instance
-
-    @classmethod
     def close_camera(cls):
-        if cls._camera is not None:
-            cls._camera.close()
-        cls.configured = False
+        """ Returns False if camera is already closed, otherwise True."""
+        if cls.camera is not None:
+            cls.camera.close()
+            cls.camera = None
+            cls.configured = False
+            return True
+        else:
+            return False
 
     @classmethod
     def configure_camera(cls):
         """ Returns False if already configuring/ed, otherwise True."""
         if not (cls.configured or cls.configuring):
             cls.configuring = True
-            cls.set_camera(PiCamera())
-            cls._camera.sensor_mode = 4
-            cls._camera.resolution = (1640, 1232)
-            cls._camera.framerate = 15
-            cls._camera.hflip = True  # custom
-            cls._camera.vflip = True  # custom
+            cls.camera = self.create_camera()
             cls.configuring = False
             cls.configured = True
             return True
         else:
             return False
+
+    @staticmethod
+    def create_camera():
+        camera = PiCamera()
+        camera.sensor_mode = 4
+        camera.resolution = (1640, 1232)
+        camera.framerate = 15
+        camera.hflip = True  # custom
+        camera.vflip = True  # custom
+        return camera

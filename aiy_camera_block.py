@@ -1,4 +1,5 @@
 from io import BytesIO
+from PIL import Image
 
 from nio import Block, Signal
 from nio.block.mixins import EnrichSignals
@@ -29,9 +30,10 @@ class AIYCamera(EnrichSignals, Block):
     def process_signals(self, signals):
         self._frame_buffer.truncate(0)
         self._frame_buffer.seek(0)
-        frame = Camera.get_camera().capture(
+        Camera.get_camera().capture(
             self._frame_buffer,
             format='jpeg')
+        frame = Image.open(self._frame_buffer)
         output_signals = []
         for signal in signals:
             signal_dict = {self.output_attr(signal): frame}

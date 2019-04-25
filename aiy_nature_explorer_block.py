@@ -22,7 +22,7 @@ class NatureExplorer(InferenceBase):
         title='Classifier Model',
         default=Models.birds)
 
-    threshold = FloatProperty(title='Minimum Score', default=0.0, advanced=True)
+    threshold = FloatProperty(title='Minimum Score (0-1.0)', default=0.0, advanced=True)
     top_k_predictions = IntProperty(
         title='Return Top k Predictions',
         default=5,
@@ -62,7 +62,7 @@ class NatureExplorer(InferenceBase):
                             outgoing_signals.append(outgoing_signal)
                         if not self._running:
                             break
-                        self.notify_signals(outgoing_signals, 'predictions')
+                        self.notify_signals(outgoing_signals)
             except:
                 self.logger.exception('failed to get inference result!')
                 self.reset_camera()

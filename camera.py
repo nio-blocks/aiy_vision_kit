@@ -23,7 +23,7 @@ class Camera:
         """ Returns False if already configuring/ed, otherwise True."""
         if not (cls.configured or cls.configuring):
             cls.configuring = True
-            cls.camera = self.create_camera()
+            cls.camera = cls.create_camera()
             cls.configuring = False
             cls.configured = True
             return True

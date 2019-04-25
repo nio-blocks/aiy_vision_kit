@@ -30,7 +30,7 @@ class AIYCamera(EnrichSignals, Block):
     def process_signals(self, signals):
         self._frame_buffer.truncate(0)
         self._frame_buffer.seek(0)
-        Camera.get_camera().capture(
+        Camera.camera.capture(
             self._frame_buffer,
             format='jpeg')
         frame = Image.open(self._frame_buffer)

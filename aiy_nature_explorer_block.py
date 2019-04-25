@@ -17,9 +17,16 @@ class Models(Enum):
 
 class NatureExplorer(InferenceBase):
 
-    model = SelectProperty(Models, title='Classifier Model', default=Models.birds)
-    threshold = FloatProperty(title='Minimum Score', default=0.0)
-    top_k_predictions = IntProperty(title='Return Top k Predictions', default=3)
+    model = SelectProperty(
+        Models,
+        title='Classifier Model',
+        default=Models.birds)
+
+    threshold = FloatProperty(title='Minimum Score', default=0.0, advanced=True)
+    top_k_predictions = IntProperty(
+        title='Return Top k Predictions',
+        default=5,
+        advanced=True)
 
     version = VersionProperty('0.1.0')
 

@@ -38,7 +38,7 @@ class InferenceBase(GeneratorBlock):
             self.logger.debug('skipping camera configuration')
 
     def release_camera(self):
-        Camera.get_camera().close()
+        Camera.close_camera()
         self.logger.debug('camera released')
 
     def reset_camera(self):

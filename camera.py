@@ -16,6 +16,10 @@ class Camera:
         cls._camera = camera_instance
 
     @classmethod
+    def close_camera(cls):
+        cls._camera.close()
+
+    @classmethod
     def configure_camera(cls):
         """ Returns False if already configuring/ed, otherwise True."""
         if not (cls.configured or cls.configuring):

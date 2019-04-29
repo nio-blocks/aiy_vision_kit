@@ -29,7 +29,12 @@ class InferenceBase(GeneratorBlock):
         super().stop()
 
     def configure_camera(self):
-        if Camera.configure_camera():
+        try:
+            success = Camera.configure_camera()
+        except:
+            self.logger.exception('failed to configure camera!')
+            return
+        if success:
             self.logger.debug('camera configured')
             if self.status.is_set(RunnerStatus.warning):
                 self.set_status('ok')
@@ -38,7 +43,11 @@ class InferenceBase(GeneratorBlock):
             self.logger.debug('skipping camera configuration')
 
     def release_camera(self):
-        Camera.close_camera()
+        try:
+            Camera.close_camera()
+        except:
+            self.logger.exception('failed to release camera!')
+            return
         self.logger.debug('camera released')
 
     def reset_camera(self):

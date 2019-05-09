@@ -1,12 +1,16 @@
-from aiy.vision.inference import CameraInference
-from aiy.vision.models import face_detection
+try:
+    from aiy.vision.inference import CameraInference
+    from aiy.vision.models import face_detection
+except ModuleNotFoundError:
+    # not available on all platforms
+    pass
 
 from nio import Signal
 from nio.properties import VersionProperty
 from .aiy_inference_base import InferenceBase
 
 
-class JoyDetection(InferenceBase):
+class AIYJoyDetector(InferenceBase):
 
     version = VersionProperty('0.1.0')
 

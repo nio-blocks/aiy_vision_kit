@@ -1,4 +1,8 @@
-from picamera import PiCamera
+try:
+    from picamera import PiCamera
+except ModuleNotFoundError:
+    # not available on all platforms
+    pass
 
 
 class Camera:

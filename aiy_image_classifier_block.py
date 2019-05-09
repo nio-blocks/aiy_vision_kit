@@ -1,9 +1,13 @@
-from picamera import PiCamera
-from aiy.vision.inference import CameraInference
-from aiy.vision.models import image_classification
+try:
+    from aiy.vision.inference import CameraInference
+    from aiy.vision.models import image_classification
+except ModuleNotFoundError:
+    # not available on all platforms
+    pass
 
 from nio.properties import FloatProperty, IntProperty, VersionProperty
 from nio import Signal
+
 from .aiy_inference_base import InferenceBase
 
 

@@ -1,6 +1,10 @@
 from enum import Enum
-from aiy.vision.inference import CameraInference
-from aiy.vision.models import inaturalist_classification
+try:
+    from aiy.vision.inference import CameraInference
+    from aiy.vision.models import inaturalist_classification
+except ModuleNotFoundError:
+    # not available on all platforms
+    pass
 
 from nio import Signal
 from nio.properties import FloatProperty, IntProperty, SelectProperty, \
@@ -10,12 +14,17 @@ from .aiy_inference_base import InferenceBase
 
 class Models(Enum):
 
-    birds = inaturalist_classification.BIRDS
-    insects = inaturalist_classification.INSECTS
-    plants = inaturalist_classification.PLANTS
+    try:
+        birds = inaturalist_classification.BIRDS
+        insects = inaturalist_classification.INSECTS
+        plants = inaturalist_classification.PLANTS
+    except:
+        # not available on all platforms
+        # define default value to allow it to load
+        birds = None
 
 
-class NatureExplorer(InferenceBase):
+class AIYNatureExplorer(InferenceBase):
 
     model = SelectProperty(
         Models,

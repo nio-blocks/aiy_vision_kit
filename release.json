@@ -2,21 +2,21 @@
   "nio/AIYCamera": {
     "language": "Python",
     "from_python": "aiy_camera_block.AIYCamera",
-    "url": "git://github.com/nio-blocks/aiy_vision_kit"
+    "url": "git://github.com/nio-blocks/aiy_vision_kit.git"
   },
   "nio/AIYImageClassifier": {
     "language": "Python",
     "from_python": "aiy_image_classifier_block.AIYImageClassifier",
-    "url": "git://github.com/nio-blocks/aiy_vision_kit"
+    "url": "git://github.com/nio-blocks/aiy_vision_kit.git"
   },
   "nio/AIYJoyDetector": {
     "language": "Python",
     "from_python": "aiy_joy_detector_block.AIYJoyDetector",
-    "url": "git://github.com/nio-blocks/aiy_vision_kit"
+    "url": "git://github.com/nio-blocks/aiy_vision_kit.git"
   },
   "nio/AIYNatureExplorer": {
     "language": "Python",
     "from_python": "aiy_nature_explorer_block.AIYNatureExplorer",
-    "url": "git://github.com/nio-blocks/aiy_vision_kit"
+    "url": "git://github.com/nio-blocks/aiy_vision_kit.git"
   }
 }

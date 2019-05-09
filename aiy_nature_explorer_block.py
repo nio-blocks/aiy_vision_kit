@@ -1,8 +1,13 @@
 from enum import Enum
 try:
+    ModuleNotFoundError  # added in py3.6
+except:
+    # make it an alias of ImportError
+    ModuleNotFoundError = ImportError
+try:
     from aiy.vision.inference import CameraInference
     from aiy.vision.models import inaturalist_classification
-except (ModuleNotFoundError, ImportError):
+except ModuleNotFoundError:
     # not available on all platforms
     pass
 

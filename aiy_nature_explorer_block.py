@@ -2,7 +2,7 @@ from enum import Enum
 try:
     from aiy.vision.inference import CameraInference
     from aiy.vision.models import inaturalist_classification
-except ModuleNotFoundError:
+except (ModuleNotFoundError, ImportError):
     # not available on all platforms
     pass
 
@@ -18,7 +18,7 @@ class Models(Enum):
         birds = inaturalist_classification.BIRDS
         insects = inaturalist_classification.INSECTS
         plants = inaturalist_classification.PLANTS
-    except:
+    except NameError:
         # not available on all platforms
         # define default value to allow it to load
         birds = None

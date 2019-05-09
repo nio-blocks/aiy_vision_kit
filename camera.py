@@ -1,6 +1,6 @@
 try:
     from picamera import PiCamera
-except ModuleNotFoundError:
+except (ModuleNotFoundError, ImportError):
     # not available on all platforms
     pass
 

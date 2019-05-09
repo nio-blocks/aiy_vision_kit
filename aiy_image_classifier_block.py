@@ -1,7 +1,7 @@
 try:
     from aiy.vision.inference import CameraInference
     from aiy.vision.models import image_classification
-except ModuleNotFoundError:
+except (ModuleNotFoundError, ImportError):
     # not available on all platforms
     pass
 

@@ -1,7 +1,7 @@
 try:
     from aiy.vision.inference import CameraInference
     from aiy.vision.models import face_detection
-except ModuleNotFoundError:
+except (ModuleNotFoundError, ImportError):
     # not available on all platforms
     pass
 

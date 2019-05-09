@@ -1,7 +1,22 @@
 {
-  "namespace/BlockName": {
+  "nio/AIYCamera": {
     "language": "Python",
-    "version": "0.0.1",
-    "reference": "github.com/<organization>/<repo>@v0.0.1"
+    "from_python": "aiy_camera_block.AIYCamera",
+    "url": "git://github.com/nio-blocks/aiy_vision_kit"
+  },
+  "nio/AIYImageClassifier": {
+    "language": "Python",
+    "from_python": "aiy_image_classifier_block.AIYImageClassifier",
+    "url": "git://github.com/nio-blocks/aiy_vision_kit"
+  },
+  "nio/AIYJoyDetector": {
+    "language": "Python",
+    "from_python": "aiy_joy_detector_block.AIYJoyDetector",
+    "url": "git://github.com/nio-blocks/aiy_vision_kit"
+  },
+  "nio/AIYNatureExplorer": {
+    "language": "Python",
+    "from_python": "aiy_nature_explorer_block.AIYNatureExplorer",
+    "url": "git://github.com/nio-blocks/aiy_vision_kit"
   }
 }

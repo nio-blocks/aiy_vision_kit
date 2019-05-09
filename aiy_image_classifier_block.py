@@ -1,13 +1,18 @@
+from picamera import PiCamera
 from aiy.vision.inference import CameraInference
-from aiy.vision.models import face_detection
+from aiy.vision.models import image_classification
 
+from nio.properties import FloatProperty, IntProperty, VersionProperty
 from nio import Signal
-from nio.properties import VersionProperty
 from .aiy_inference_base import InferenceBase
 
 
-class JoyDetection(InferenceBase):
+class AIYImageClassifier(InferenceBase):
 
+    top_k_predictions = IntProperty(
+        title='Return Top k Predictions',
+        default=5,
+        advanced=True)
     version = VersionProperty('0.1.0')
 
     def start(self):
@@ -16,26 +21,25 @@ class JoyDetection(InferenceBase):
 
     def stop(self):
         self._running = False
-        self.logger.debug('stopping child thread ...')
+        self.logger.debug('killing child thread ...')
         super().stop()
 
     def run(self):
         while self._running:
             try:
                 self.logger.debug('loading inference model ...')
-                with CameraInference(face_detection.model()) as inference:
+                with CameraInference(image_classification.model()) as inference:
                     self.logger.debug('running inference ...')
                     for result in inference.run():
-                        faces = face_detection.get_faces(result)
-                        if faces:
-                            self.logger.debug(
-                                'found {} faces'.format(len(faces)))
+                        predictions = image_classification.get_classes(
+                            result,
+                            top_k=self.top_k_predictions(),
+                            threshold=0)
                         outgoing_signals = []
-                        for face in faces:
+                        for label, score in predictions:
                             signal_dict = {
-                                'bounding_box': face.bounding_box,
-                                'face_score': face.face_score,
-                                'joy_score': face.joy_score,
+                                'label': label,
+                                'score': score,
                             }
                             outgoing_signal = Signal(signal_dict)
                             outgoing_signals.append(outgoing_signal)

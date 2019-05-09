@@ -1,48 +1,38 @@
 {
-  "nio/ImageClassification": {
-    "version": "0.0.1",
-    "description": "",
-    "categories": [],
-    "properties": {
-      "num_top_predictions": {
-        "title": "Return Top k Predictions",
-        "type": "IntType",
-        "description": "",
-        "default": 10
-      }
-    },
-    "inputs": {},
-    "outputs": {
-      "default": {
-        "description": ""
-      }
-    },
-    "commands": {}
+  "nio/AIYCamera": {
+    "description": "Capture JPEG images from the Vision Kit camera.",
+    "categories": [
+      "Machine Learning"
+    ],
+    "tags": "",
+    "from_readme": "docs/aiy_camera.md",
+    "from_python": "aiy_camera_block.AIYCamera"
   },
-  "nio/JoyDetection": {
-    "version": "0.0.1",
-    "description": "",
-    "categories": [],
-    "properties": {},
-    "inputs": {},
-    "outputs": {
-      "default": {
-        "description": ""
-      }
-    },
-    "commands": {}
+  "nio/AIYImageClassifier": {
+    "description": "Perform real-time inferences with a general image classifier.",
+    "categories": [
+      "Machine Learning"
+    ],
+    "tags": "",
+    "from_readme": "docs/aiy_image_classifier.md",
+    "from_python": "aiy_image_classifier_block.AIYImageClassifier"
   },
-  "nio/ObjectDetection": {
-    "version": "0.0.1",
-    "description": "",
-    "categories": [],
-    "properties": {},
-    "inputs": {},
-    "outputs": {
-      "default": {
-        "description": ""
-      }
-    },
-    "commands": {}
+  "nio/AIYJoyDetector": {
+    "description": "Perform real-time face and smile detection.",
+    "categories": [
+      "Machine Learning"
+    ],
+    "tags": "",
+    "from_readme": "docs/aiy_joy_detector.md",
+    "from_python": "aiy_joy_detector_block.AIYJoyDetector"
+  },
+  "nio/AIYNatureExplorer": {
+    "description": "Perform real-time inferences using bird, insect, or plant classifier models.",
+    "categories": [
+      "Machine Learning"
+    ],
+    "tags": "",
+    "from_readme": "docs/aiy_nature_explorer.md",
+    "from_python": "aiy_nature_explorer_block.AIYNatureExplorer"
   }
 }

@@ -1,64 +1,16 @@
-ImageClassification
-===================
+# AIY Vision Kit Blocks
 
+Blocks to use the hardware of your AIY Vision Kit.
 
-Properties
-----------
-- **num_top_predictions**: 
+## Blocks in this collection
 
-Inputs
-------
-None
+ * [AIYCamera](./docs/aiy_camera.md)
+ * [AIYImageClassification](./docs/aiy_image_classification.md)
+ * [AIYJoyDetector](./docs/aiy_joy_detector.md)
+ * [AIYNatureExplorer](./docs/aiy_nature_explorer.md)
 
-Outputs
--------
-- **default**: 
+## Requirements
 
-Commands
---------
-None
-
-***
-
-JoyDetection
-============
-
-
-Properties
-----------
-None
-
-Inputs
-------
-None
-
-Outputs
--------
-- **default**: 
-
-Commands
---------
-None
-
-***
-
-ObjectDetection
-===============
-
-
-Properties
-----------
-None
-
-Inputs
-------
-None
-
-Outputs
--------
-- **default**: 
-
-Commands
---------
-None
-
+ * **pillow**
+ * **aiy libraries** (included in official SD card image)
+ * **PiCamera** (included in official SD card image)

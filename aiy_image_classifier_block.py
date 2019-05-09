@@ -7,7 +7,7 @@ from nio import Signal
 from .aiy_inference_base import InferenceBase
 
 
-class ImageClassification(InferenceBase):
+class AIYImageClassifier(InferenceBase):
 
     top_k_predictions = IntProperty(
         title='Return Top k Predictions',

@@ -10,7 +10,7 @@ from .camera import Camera
 @not_discoverable
 class InferenceBase(GeneratorBlock):
 
-    version = VersionProperty('0.0.1')
+    version = VersionProperty('0.1.0')
 
     def __init__(self):
         super().__init__()
@@ -44,11 +44,12 @@ class InferenceBase(GeneratorBlock):
 
     def release_camera(self):
         try:
-            Camera.close_camera()
+            success = Camera.close_camera()
         except:
             self.logger.exception('failed to release camera!')
             return
-        self.logger.debug('camera released')
+        if success:
+            self.logger.debug('camera released')
 
     def reset_camera(self):
         if not self.status.is_set(RunnerStatus.warning):

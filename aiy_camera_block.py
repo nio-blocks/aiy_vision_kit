@@ -16,8 +16,7 @@ class AIYCamera(EnrichSignals, Block):
         default='image',
         advanced=True,
     )
-
-    version = VersionProperty('0.0.1')
+    version = VersionProperty('0.1.0')
 
     def __init__(self):
         super().__init__()
@@ -40,6 +39,10 @@ class AIYCamera(EnrichSignals, Block):
             output_signal = self.get_output_signal(signal_dict, signal)
             output_signals.append(output_signal)
         self.notify_signals(output_signals)
+
+    def stop(self):
+        Camera.close_camera()
+        super().stop()
 
     def configure_camera(self):
         if Camera.configure_camera():

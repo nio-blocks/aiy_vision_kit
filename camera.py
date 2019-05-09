@@ -2,6 +2,7 @@ from picamera import PiCamera
 
 
 class Camera:
+    """ Camera interface that can be shared by multiple block classes."""
 
     camera = None
     configured = False
@@ -36,6 +37,6 @@ class Camera:
         camera.sensor_mode = 4
         camera.resolution = (1640, 1232)
         camera.framerate = 15
-        camera.hflip = True  # custom
-        camera.vflip = True  # custom
+        # camera.hflip = True
+        # camera.vflip = True
         return camera

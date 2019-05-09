@@ -22,12 +22,10 @@ class NatureExplorer(InferenceBase):
         title='Classifier Model',
         default=Models.birds)
 
-    threshold = FloatProperty(title='Minimum Score (0-1.0)', default=0.0, advanced=True)
     top_k_predictions = IntProperty(
         title='Return Top k Predictions',
         default=5,
         advanced=True)
-
     version = VersionProperty('0.1.0')
 
     def start(self):
@@ -50,13 +48,12 @@ class NatureExplorer(InferenceBase):
                     for result in inference.run():
                         predictions = inaturalist_classification.get_classes(
                             result,
-                            top_k=self.top_k_predictions(),
-                            threshold=self.threshold())
+                            top_k=self.top_k_predictions())
                         outgoing_signals = []
-                        for prediction in predictions:
+                        for label, score in predictions:
                             signal_dict = {
-                                'label': prediction[0],
-                                'score': prediction[1],
+                                'label': label,
+                                'score': score,
                             }
                             outgoing_signal = Signal(signal_dict)
                             outgoing_signals.append(outgoing_signal)
